@@ -1,0 +1,24 @@
+{
+  "name": "danpgdiff",
+  "version": "1.0.0",
+  "description": "check diferences in postgres schemas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly ./src/Main.ts",
+    "prod": "tsc && node ./build/app.js"
+  },
+  "keywords": [
+    "pg",
+    "diff"
+  ],
+  "author": "Daniel Hernandez",
+  "license": "ISC",
+  "dependencies": {
+    "@types/pg": "^7.11.0",
+    "pg": "^7.12.1",
+    "ts-node-dev": "^1.0.0-pre.42",
+    "typescript": "^3.5.3"
+  }
+}
