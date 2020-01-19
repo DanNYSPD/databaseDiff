@@ -1,13 +1,15 @@
 import  {Client}  from 'pg';
 import Column from './Column';
 import Table from './Table';
-//import  Client  = require('pg');
-//import {Column} from './Column'
 
+import convert  from 'xml-js';
+import * as fs from 'fs';
+import Database from './Database';
+import SchemaToXmlDom from './XML/SchemaToXmlDom';
 const client = new Client({
     user: 'postgres',
     host: 'localhost',
-    database: 'd1',
+    database: 'dvdrental',
     password: '123456',
     port: 5432,
   })
@@ -68,15 +70,16 @@ class Diff{
       const tableName= await this.tablesNames();
       // i have to pyt async in the anonymous function 
       let tables:Table[]=[];
-      tableName.forEach(async  table => {
-          let columns=  await  this.getCOlumnForTable(table.table_name);
-         let tableO= new Table();
-          tableO.tableName=table;
-          tableO.columns=columns;
-          tables.push(tableO);
-          console.log(columns)
-          console.log(tables)
-      });
+      for (let table of tableName){
+        let columns=  await  this.getCOlumnForTable(table.table_name);
+        let tableO= new Table();
+         tableO.tableName=table.table_name;
+         tableO.columns=columns;
+         tables.push(tableO);
+        // console.log(columns)
+        // console.log(tables)
+      }
+     
       return tables;
     }
     async  asyncForEach(array:any[], callback:CallableFunction) {
@@ -84,6 +87,20 @@ class Diff{
           await callback(array[index], index, array);
         }
       }
+
+      readFromJson(file:string){
+       let json=  fs.readFileSync(file,'utf8');
+       var options = {compact: true, ignoreComment: true, spaces: 4};
+       var result = convert.json2xml(json, options);
+       return result;// we return the json
+      }
+
+     readFromJsonToModel(file:string){
+      let json=  fs.readFileSync(file,'utf8');
+      let database=  Object.assign(new Database,JSON.parse(json))
+      console.log("obtenido")
+      console.log(database);
+     } 
 }
 
 
@@ -93,7 +110,25 @@ diff.schema='d1'
 
 //diff.tablesNames();
 diff.getTables().then(tables=>{
-    console.log(tables)
+    console.debug("tables:")
+    let database= new Database();
+    database.tables=tables;
+    //console.log(tables)
+    let json =JSON.stringify(database,null,2); 
+    var options = {compact: true, ignoreComment: true, spaces: 4};
+    var result = convert.json2xml(json, options);
+        console.log(result);
+    let jsonName="./output/"+Date.now()+".json";
+    fs.writeFileSync(jsonName,json);
+    fs.writeFileSync(jsonName+".xml",result);
 
+    diff.readFromJsonToModel(jsonName);
+  let xml=SchemaToXmlDom.writeMOdel(database);
 
+  fs.writeFileSync("./output/schema.xml",xml);
+    console.log();
 })
+
+function ModelToXml(){
+
+}

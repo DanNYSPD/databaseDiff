@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/Main.ts",
-    "prod": "tsc && node ./build/app.js"
+    "prod": "tsc && node ./build/app.js",
+    "debug": "nodemon --inspect ./bin/www"
   },
   "keywords": [
     "pg",
@@ -19,6 +20,11 @@
     "@types/pg": "^7.11.0",
     "pg": "^7.12.1",
     "ts-node-dev": "^1.0.0-pre.42",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "xml-js": "^1.6.11",
+    "xmlbuilder": "^13.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
